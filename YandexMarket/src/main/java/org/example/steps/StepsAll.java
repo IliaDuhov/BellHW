@@ -1,9 +1,9 @@
 package org.example.steps;
 
 import io.qameta.allure.Step;
+import org.example.helpers.Assertions;
 import org.example.pages.YandexAfterSearch;
 import org.example.pages.YandexMarketFirstPage;
-import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -40,7 +40,7 @@ public class StepsAll {
     @Step("Проверяем на корректной ли мы странице")
     public static void checkCorrectPage(String subSectionName){
         YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
-        Assertions.assertTrue(yandexAfterSearch.checkCorrectPage(subSectionName));
+        Assertions.assertTrue(yandexAfterSearch.checkCorrectPage(subSectionName), "не корректная страница");
     }
 
     @Step("Устанавливаем фильтр цен: {minPrice}, {maxPrice}")
@@ -58,7 +58,8 @@ public class StepsAll {
     @Step("Проверяем количество товаров: {minNumbOfElements}")
     public static void checkNumberOfElements(Integer minNumbOfElements){
         YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
-        Assertions.assertTrue(yandexAfterSearch.checkNumberOfElements(minNumbOfElements));
+        Assertions.assertTrue(yandexAfterSearch.
+                checkNumberOfElements(minNumbOfElements), "Количество найденных элементов не сооветсвует "+ minNumbOfElements);
     }
 
     @Step("Проверяем применились ли фильтры: {minPrice}, {maxPrice}, {brand1}, {brand2}")
@@ -83,7 +84,7 @@ public class StepsAll {
     public static void checkResultsAfterHeaderSearch(String firstProductAfterSelect){
         YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         Assertions.assertTrue(yandexAfterSearch.checkResultsAfterHeaderSearch(yandexAfterSearch.
-                getFirstProductAfterSelect()));
+                getFirstProductAfterSelect()), firstProductAfterSelect + "не найден после поиска");
 
     }
 

@@ -39,6 +39,7 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         WebElement brandSection = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@data-auto='filter' and contains(., 'Бренд')]//*[contains(text(), 'Бренд')]")
         ));
+
         List<String> selectedBrands = new ArrayList<>();
 
         for (String brand : brands) {
@@ -53,30 +54,34 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         }
 
         if (selectedBrands.size() < brands.length) {
-            WebElement allBrands = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
+            WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                     "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button"
             )));
             allBrands.click();
 
-            WebElement brandToFind = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+            WebElement brandToFind = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
                     "//fieldset//input[@placeholder='Найти']"
             )));
 
             for (String brand : brands) {
                 if (!selectedBrands.contains(brand)) {
-                    brandToFind.click();
+                    brandToFind.clear();
                     brandToFind.sendKeys(brand);
 
-                    WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                            "//div[contains(@data-zone-data, '"+brand+"')]//label[@role='checkbox']"
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
+                            "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
                     )));
-                    brandCheckbox.click();
+
+                    WebElement brandCheckbox = chromeDriver.findElement(By.xpath(
+                            "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
+                    ));
+                    wait.until(ExpectedConditions.elementToBeClickable(brandCheckbox)).click();
+
+                    selectedBrands.add(brand);
                 }
             }
-
         }
     }
-
 
     public boolean checkNumberOfElements(Integer minCount){
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
