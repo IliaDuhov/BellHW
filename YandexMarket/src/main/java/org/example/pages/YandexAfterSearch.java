@@ -35,45 +35,48 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         maxPriceInput.sendKeys(maxPrice.toString());
     }
 
-    public void selectBrands(String... brands){
+    public void selectBrands(String... brands) {
         WebElement brandSection = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@data-auto='filter' and contains(., 'Бренд')]//*[contains(text(), 'Бренд')]")
         ));
-        List<WebElement> pressedCheckBoxes = new ArrayList<>();
-        for (String brand : brands) {
-            WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[@data-auto='filter' and contains(., 'Бренд')]//span[contains(text(), '" + brand + "')]"
-            )));
-            boolean alreadyPressed = pressedCheckBoxes.stream()
-                    .anyMatch(checkbox -> checkbox.equals(brandCheckbox));
+        List<String> selectedBrands = new ArrayList<>();
 
-            if (!alreadyPressed) {
+        for (String brand : brands) {
+            List<WebElement> foundBrands = chromeDriver.findElements(By.xpath(
+                    "//div[@data-auto='filter' and contains(., 'Бренд')]//span[contains(text(), '" + brand + "')]"
+            ));
+            if (!foundBrands.isEmpty()) {
+                WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(foundBrands.get(0)));
                 brandCheckbox.click();
-                pressedCheckBoxes.add(brandCheckbox);
+                selectedBrands.add(brand);
             }
         }
-        if(!(brands.length == pressedCheckBoxes.size())){
-            WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//span"
+
+        if (selectedBrands.size() < brands.length) {
+            WebElement allBrands = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
+                    "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button"
             )));
             allBrands.click();
-            WebElement brandToFind = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[@data-auto='filter' and contains(.,'Бренд')]//input"
-            )));
-            for (String brand : brands){
-                brandToFind.click();
-                brandToFind.sendKeys(brand);
-                WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                        "//span[contains(text(), '" + brand + "')]"
-                )));
 
-                if (!brandCheckbox.isSelected()) {
+            WebElement brandToFind = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                    "//fieldset//input[@placeholder='Найти']"
+            )));
+
+            for (String brand : brands) {
+                if (!selectedBrands.contains(brand)) {
+                    brandToFind.click();
+                    brandToFind.sendKeys(brand);
+
+                    WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                            "//div[contains(@data-zone-data, '"+brand+"')]//label[@role='checkbox']"
+                    )));
                     brandCheckbox.click();
                 }
-                brandToFind.clear();
             }
+
         }
     }
+
 
     public boolean checkNumberOfElements(Integer minCount){
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
