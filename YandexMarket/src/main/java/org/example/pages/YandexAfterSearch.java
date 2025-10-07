@@ -8,12 +8,27 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Класс представляющий собой страницу после поиска
+ * @author IliaDuhov
+ */
 public class YandexAfterSearch extends YandexMarketFirstPage {
 
+    /**
+     * Конструтор, обращающийся к конструктору родителя YandexMarketFirstPage.java
+     * @author IliaDuhov
+     * @param chromeDriver
+     */
     public YandexAfterSearch(WebDriver chromeDriver) {
         super(chromeDriver);
     }
 
+    /**
+     * Метод, проверяющий корректность страницы после поиска
+     * @author IliaDuhov
+     * @param subSection название подраздела
+     * @return boolean
+     */
     public boolean checkCorrectPage(String subSection) {
         List<WebElement> header = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
                 " //h1[text()='" + subSection + "']"
@@ -21,6 +36,12 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         return !header.isEmpty();
     }
 
+    /**
+     * Метод, устанавливабщий значение минимальной и максимальной цены продукта
+     * @author IliaDuhov
+     * @param minPrice минимальная цена
+     * @param maxPrice максимальная цена
+     */
     public void setPriceParams(Double minPrice, Double maxPrice) {
         WebElement minPriceInput = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                 "//input[@type='text' and contains(@id, 'glprice_25563_min')]"
@@ -35,6 +56,12 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         maxPriceInput.sendKeys(maxPrice.toString());
     }
 
+    /**
+     * Метод, устанавливающий бренд продукта. Если бренды есть в начальном меню, то они выбираются. Если брендов нет,
+     * производится поиск по всем брендам
+     * @author IliaDuhov
+     * @param brands бренды
+     */
     public void selectBrands(String... brands) {
         WebElement brandSection = wait.until(ExpectedConditions.visibilityOfElementLocated(
                 By.xpath("//div[@data-auto='filter' and contains(., 'Бренд')]//*[contains(text(), 'Бренд')]")
@@ -83,6 +110,12 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         }
     }
 
+    /**
+     * Метод, проверяющий количество элементов после применения фильтров
+     * @author IliaDuhov
+     * @param minCount минимальное количество элементов
+     * @return boolean
+     */
     public boolean checkNumberOfElements(Integer minCount){
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
                 "//a[contains(@href, '/card/') and @tabindex='-1']"
@@ -91,6 +124,13 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         return products.size()>=minCount;
     }
 
+    /**
+     * Метод, проверяющий применились ли циклы ко всем элементам
+     * @author IliaDuhov
+     * @param minPrice минимальная цена
+     * @param maxPrice максимальная цена
+     * @param brands бренды
+     */
     public void checkFilterApplied(Double minPrice, Double maxPrice, String... brands) {
         List<WebElement> products = wait.until(ExpectedConditions.refreshed(
                 ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath((
@@ -122,6 +162,11 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         }
     }
 
+    /**
+     * Метод, запоминающий названия первого продукта в ленте
+     * @author IliaDuhov
+     * @return String
+     */
     public String getFirstProductAfterSelect(){
         List<WebElement> productsAfterSelect = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
                 "//div[contains(@id, '/content/page')]//span[@tabindex='0']"
@@ -129,6 +174,11 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         return productsAfterSelect.get(0).getText();
     }
 
+
+    /**
+     * Метод поиска продукта
+     * @param input полное название продукта
+     */
     public void searchHeader(String input){
         WebElement inputField = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                 "//input[@id='header-search']"
@@ -140,6 +190,12 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         searchButton.click();
     }
 
+    /**
+     * Метод, проверяющий наличие элемента после поиска
+     * @author IliaDuhov
+     * @param expectedProduct ожидаемое название продукта
+     * @return boolean
+     */
     public boolean checkResultsAfterHeaderSearch(String expectedProduct) {
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
                 "//a[contains(@href, '/card/') and @tabindex='-1']"

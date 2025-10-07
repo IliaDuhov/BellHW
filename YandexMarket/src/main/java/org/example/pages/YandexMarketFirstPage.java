@@ -10,26 +10,56 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+/**
+ * Класс представляющий собой первую страницу
+ * @author IliaDuhov
+ */
 public class YandexMarketFirstPage {
 
+    /**
+     * Поле для инициализации драйвера
+     * @author IliaDuhov
+     */
     protected WebDriver chromeDriver;
+
+    /**
+     * Поле для инициализации ожиданий
+     * @author IliaDuhov
+     */
     protected WebDriverWait wait;
+
+    /**
+     * Поле типа Actions для работы с наведением курсора
+     * @author IliaDuhov
+     */
     protected Actions actions;
 
-
-
+    /**
+     * Конструктор инициализирующий поля класса YandexMarketFirstPage.java
+     * @author IliaDuhov
+     * @param chromeDriver драйвер
+     */
     public YandexMarketFirstPage(WebDriver chromeDriver){
         this.chromeDriver = chromeDriver;
         this.wait = new WebDriverWait(chromeDriver, 10);
         this.actions = new Actions(chromeDriver);
     }
 
+    /**
+     * Метод открытия каталога
+     * @author IliaDuhov
+     */
     public void openCatalog(){
         WebElement catalogButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                 "//button//span[text()='Каталог']")));
         catalogButton.click();
     }
 
+    /**
+     * Метод наведения курсора на выбранный раздел
+     * @author IliaDuhov
+     * @param sectionName название раздела
+     */
     public void moveCursorOnSection(String sectionName){
         WebElement section = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                 "//ul[@role='tablist']/li/a/span[contains(text(),'" + sectionName + "')]")));
@@ -37,6 +67,11 @@ public class YandexMarketFirstPage {
         actions.moveToElement(section).perform();
     }
 
+    /**
+     * Метод перехода к подразделу
+     * @author IliaDuhov
+     * @param subSectionName название подраздела
+     */
     public void moveToSubSection(String subSectionName){
         WebElement subSection = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
                 "//div[@aria-level='2']//a[text()='"+subSectionName+"']"

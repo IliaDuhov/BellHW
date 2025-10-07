@@ -6,8 +6,16 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
 
+/**
+ * Класс DataProvider для параметризации теста
+ * @author IliaDuhov
+ */
 public class DataProvider {
 
+    /**
+     * Метод для параметризации теста
+     * @author IliaDuhov
+     */
     public static Stream<Arguments> provideDataCheckingLaptops(){
         return Stream.of(
                 Arguments.of("Электроника", "Ноутбуки", 10000.0, 20000.0, "HP", "Lenovo", 5));
