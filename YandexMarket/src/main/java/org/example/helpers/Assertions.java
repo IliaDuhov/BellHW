@@ -11,8 +11,8 @@ public class Assertions {
     /**
      * Метод переопределяющий assertTrue для отображение в allure отчёте
      * @author IliaDuhov
-     * @param condition
-     * @param message
+     * @param condition состояние после проверки
+     * @param message сообщение после проверки
      */
     @Step("Проверяем что нет ошибки: '{message}'")
     public static void assertTrue(boolean condition, String message){

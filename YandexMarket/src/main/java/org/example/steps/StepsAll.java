@@ -97,12 +97,12 @@ public class StepsAll {
      * Метод, устанавливающий бренд продукта. Если бренды есть в начальном меню, то они выбираются. Если брендов нет,
      * производится поиск по всем брендам
      * @author IliaDuhov
-     * @param brand1,brand2 бренды
+     * @param brands бренды
      */
     @Step("Выбор производителей: {brand1}, {brand2}")
-    public static void selectBrands(String brand1, String brand2) {
+    public static void selectBrands(String...brands) {
         YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
-        yandexAfterSearch.selectBrands(brand1, brand2);
+        yandexAfterSearch.selectBrands(brands);
     }
 
     /**
@@ -123,13 +123,12 @@ public class StepsAll {
      * @author IliaDuhov
      * @param minPrice минимальная цена
      * @param maxPrice максимальная цена
-     * @param brand1 бренды
-     * @param brand2 бренды
+     * @param brands бренды
      */
     @Step("Проверяем применились ли фильтры: {minPrice}, {maxPrice}, {brand1}, {brand2}")
-    public static void checkFilterApplied(Double minPrice, Double maxPrice, String brand1, String brand2){
+    public static void checkFilterApplied(Double minPrice, Double maxPrice, String...brands){
         YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
-        yandexAfterSearch.checkFilterApplied(minPrice, maxPrice, brand1, brand2);
+        yandexAfterSearch.checkFilterApplied(minPrice, maxPrice, brands);
     }
 
     /**

@@ -17,7 +17,7 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
     /**
      * Конструтор, обращающийся к конструктору родителя YandexMarketFirstPage.java
      * @author IliaDuhov
-     * @param chromeDriver
+     * @param chromeDriver драйвер
      */
     public YandexAfterSearch(WebDriver chromeDriver) {
         super(chromeDriver);
@@ -81,34 +81,40 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         }
 
         if (selectedBrands.size() < brands.length) {
-            WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button"
-            )));
-            allBrands.click();
-
-            WebElement brandToFind = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-                    "//fieldset//input[@placeholder='Найти']"
-            )));
-
+            List<String> remainingBrands = new ArrayList<>();
             for (String brand : brands) {
                 if (!selectedBrands.contains(brand)) {
-                    brandToFind.clear();
-                    brandToFind.sendKeys(brand);
+                    remainingBrands.add(brand);
+                }
+            }
+
+            for (String brand : remainingBrands) {
+                List<WebElement> modalInputs = chromeDriver.findElements(By.xpath(
+                        "//fieldset//input[contains(@placeholder, 'Найти')]"));
+                if (modalInputs.isEmpty()) {
+                    WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                            "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button")));
+                    allBrands.click();
 
                     wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-                            "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
-                    )));
-
-                    WebElement brandCheckbox = chromeDriver.findElement(By.xpath(
-                            "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
-                    ));
-                    wait.until(ExpectedConditions.elementToBeClickable(brandCheckbox)).click();
-
-                    selectedBrands.add(brand);
+                            "//fieldset//input[contains(@placeholder, 'Найти')]")));
                 }
+
+                WebElement brandToFind = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
+                        "//fieldset//input[contains(@placeholder, 'Найти')]")));
+                brandToFind.clear();
+                brandToFind.sendKeys(brand);
+
+                WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                        "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
+                )));
+                brandCheckbox.click();
+                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//fieldset//input[contains(@placeholder, 'Найти')]")));
             }
         }
     }
+
+
 
     /**
      * Метод, проверяющий количество элементов после применения фильтров

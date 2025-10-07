@@ -9,7 +9,7 @@ import org.aeonbits.owner.ConfigFactory;
 public class Properties {
 
     /**
-     * Метод для доступа к константным перменным в файле .properties
+     * Поле для доступа к константным перменным в файле .properties
      * @author IliaDuhov
      */
     public static TestsProperties testsProperties = ConfigFactory.create(TestsProperties.class);

@@ -12,9 +12,17 @@ import org.aeonbits.owner.Config;
 })
 public interface TestsProperties extends Config {
 
+    /**
+     * Возвращает адрес сайта yandexmarket.url
+     * @return String
+     */
     @Config.Key("yandexmarket.url")
     String yandexMarketUrl();
 
+    /**
+     * Возвращает время для timeout
+     * @return int
+     */
     @Config.Key("default.timeout")
     int defaultTimeout();
 }
