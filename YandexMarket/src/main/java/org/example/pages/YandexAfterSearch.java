@@ -1,12 +1,10 @@
 package org.example.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Класс представляющий собой страницу после поиска
@@ -89,6 +87,9 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
             }
 
             for (String brand : remainingBrands) {
+                WebElement allBrandsButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                        "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button")));
+                allBrandsButton.click();
                 List<WebElement> modalInputs = chromeDriver.findElements(By.xpath(
                         "//fieldset//input[contains(@placeholder, 'Найти')]"));
                 if (modalInputs.isEmpty()) {
@@ -109,7 +110,6 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
                         "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
                 )));
                 brandCheckbox.click();
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//fieldset//input[contains(@placeholder, 'Найти')]")));
             }
         }
     }
@@ -131,39 +131,59 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
     }
 
     /**
-     * Метод, проверяющий применились ли циклы ко всем элементам
+     * Метод, проверяющий применились ли фильтры ко всем элементам
      * @author IliaDuhov
      * @param minPrice минимальная цена
      * @param maxPrice максимальная цена
      * @param brands бренды
      */
     public void checkFilterApplied(Double minPrice, Double maxPrice, String... brands) {
-        List<WebElement> products = wait.until(ExpectedConditions.refreshed(
-                ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath((
-                "//a[contains(@href, '/card/') and @tabindex='-1']"
-        )))));
+        int pageNumber = 1;
+        Set<String> processedTitles = new HashSet<>();
+        boolean hasMoreProducts = true;
 
-        List<WebElement> filteredProducts = new ArrayList<>();
+        while (hasMoreProducts) {
+            List<WebElement> products = chromeDriver.findElements(
+                    By.xpath("//a[contains(@href, '/card/') and @tabindex='-1']")
+            );
 
-        for (WebElement product : products) {
-            String productText = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[contains(@id, '/content/page')]//span[@tabindex='0']"))).getText();
-            String productPrice = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                    "//div[@tabindex='0']//span[contains(@class, 'headline-5_bold')]"
-            ))).getText();
-            double price = Double.parseDouble(productPrice.replaceAll("[^\\d]", ""));
-            boolean priceMatch = price >= minPrice && price <= maxPrice;
+            int newItemsCount = 0;
+            for (WebElement product : products) {
+                WebElement titleElement = product.findElement(By.xpath(
+                        "//div[contains(@id, '/content/page')]//span[@tabindex='0']"));
+                String title = titleElement.getText().toLowerCase();
 
-            boolean brandMatch = false;
-            for (String brand : brands) {
-                if (productText.toLowerCase().contains(brand.toLowerCase())) {
-                    brandMatch = true;
-                    break;
+                if (processedTitles.contains(title)) {
+                    continue;
+                }
+
+                processedTitles.add(title);
+                newItemsCount++;
+
+                WebElement priceElement = product.findElement(By.xpath(
+                        "//div[@tabindex='0']//span[contains(@class, 'headline-5_bold')]"));
+                String priceText = priceElement.getText().replaceAll("[^\\d]", "");
+                double price = Double.parseDouble(priceText);
+
+                boolean priceMatch = price >= minPrice && price <= maxPrice;
+                boolean brandMatch = Arrays.stream(brands)
+                        .anyMatch(brand -> title.contains(brand.toLowerCase()));
+
+                if (!priceMatch || !brandMatch) {
+                   continue;
                 }
             }
 
-            if (priceMatch && brandMatch) {
-                filteredProducts.add(product);
+            if (!products.isEmpty()) {
+                WebElement lastProduct = products.get(products.size() - 1);
+                new Actions(chromeDriver)
+                        .moveToElement(lastProduct)
+                        .perform();
+            }
+            if (newItemsCount == 0) {
+                hasMoreProducts = false;
+            } else {
+                pageNumber++;
             }
         }
     }
