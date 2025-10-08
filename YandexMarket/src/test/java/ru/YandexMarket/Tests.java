@@ -41,9 +41,9 @@ public class Tests extends BaseTest{
         selectBrands(brands);
         checkNumberOfElements(minNumbOfElements);
         checkFilterApplied(minPrice, maxPrice, brands);
-        getFirstProductAfterSelect();
-        searchHeader(getFirstProductAfterSelect());
-        checkResultsAfterHeaderSearch(getFirstProductAfterSelect());
+        String firstProductAfterSelect = getFirstProductAfterSelect();
+        searchHeader(firstProductAfterSelect);
+        checkResultsAfterHeaderSearch(firstProductAfterSelect);
 
     }
 }

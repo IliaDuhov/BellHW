@@ -26,6 +26,28 @@ public class StepsAll {
     private static WebDriver chromeDriver;
 
     /**
+     * Метод для инициализации полей yandexMarketFirstPage
+     * и yandexAfterSearch
+     * @author IliaDuhov
+     */
+    private static void initPages() {
+            yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
+            yandexAfterSearch = new YandexAfterSearch(chromeDriver);
+    }
+
+    /**
+     * Поле для инициализации первой страницы YandexMarket
+     * @author IliaDuhov
+     */
+    private static YandexMarketFirstPage yandexMarketFirstPage;
+
+    /**
+     * Поле для инициализации первой страницы YandexAfterSearch
+     * @author IliaDuhov
+     */
+    private static YandexAfterSearch yandexAfterSearch;
+
+    /**
      * Метод открытия сайта
      * @param url url сайта
      * @param currentDriver используемый драйвер
@@ -34,6 +56,7 @@ public class StepsAll {
     public static void openSite(String url, WebDriver currentDriver){
         chromeDriver=currentDriver;
         chromeDriver.get(url);
+        initPages();
         wait = new WebDriverWait(chromeDriver,30);
     }
 
@@ -43,7 +66,6 @@ public class StepsAll {
      */
     @Step("Открываем каталог")
     public static void openCatalog(){
-        YandexMarketFirstPage yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
         yandexMarketFirstPage.openCatalog();
     }
 
@@ -54,7 +76,6 @@ public class StepsAll {
      */
     @Step("Наводим курсор на раздел: {sectionName}")
     public static void moveCursorOnSection(String sectionName){
-        YandexMarketFirstPage yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
         yandexMarketFirstPage.moveCursorOnSection(sectionName);
     }
 
@@ -65,7 +86,6 @@ public class StepsAll {
      */
     @Step("Наводим курсор на подраздел: {subSectionName}")
     public static void moveToSubSection(String subSectionName){
-        YandexMarketFirstPage yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
         yandexMarketFirstPage.moveToSubSection(subSectionName);
     }
 
@@ -77,7 +97,6 @@ public class StepsAll {
      */
     @Step("Проверяем на корректной ли мы странице")
     public static void checkCorrectPage(String subSectionName){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         Assertions.assertTrue(yandexAfterSearch.checkCorrectPage(subSectionName), "не корректная страница");
     }
 
@@ -89,7 +108,6 @@ public class StepsAll {
      */
     @Step("Устанавливаем фильтр цен: {minPrice}, {maxPrice}")
     public static void setPriceParams(Double minPrice, Double maxPrice){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         yandexAfterSearch.setPriceParams(minPrice,maxPrice);
     }
 
@@ -101,7 +119,6 @@ public class StepsAll {
      */
     @Step("Выбор производителей: {brand1}, {brand2}")
     public static void selectBrands(String...brands) {
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         yandexAfterSearch.selectBrands(brands);
     }
 
@@ -113,7 +130,6 @@ public class StepsAll {
      */
     @Step("Проверяем количество товаров: {minNumbOfElements}")
     public static void checkNumberOfElements(Integer minNumbOfElements){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         Assertions.assertTrue(yandexAfterSearch.
                 checkNumberOfElements(minNumbOfElements), "Количество найденных элементов не сооветсвует "+ minNumbOfElements);
     }
@@ -127,7 +143,6 @@ public class StepsAll {
      */
     @Step("Проверяем применились ли фильтры: {minPrice}, {maxPrice}, {brand1}, {brand2}")
     public static void checkFilterApplied(Double minPrice, Double maxPrice, String...brands){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         yandexAfterSearch.checkFilterApplied(minPrice, maxPrice, brands);
     }
 
@@ -137,7 +152,6 @@ public class StepsAll {
      */
     @Step("Поиск элемента после фильтрации")
     public static void searchHeader(String productTitle){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         yandexAfterSearch.searchHeader(yandexAfterSearch.getFirstProductAfterSelect());
     }
 
@@ -148,7 +162,6 @@ public class StepsAll {
      */
     @Step("Поиск названия продукта")
     public static String getFirstProductAfterSelect(){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         return yandexAfterSearch.getFirstProductAfterSelect();
     }
 
@@ -160,7 +173,6 @@ public class StepsAll {
      */
     @Step("Проверка поиска товара после поиска: {firstProductAfterSelect}")
     public static void checkResultsAfterHeaderSearch(String firstProductAfterSelect){
-        YandexAfterSearch yandexAfterSearch = new YandexAfterSearch(chromeDriver);
         Assertions.assertTrue(yandexAfterSearch.checkResultsAfterHeaderSearch(yandexAfterSearch.
                 getFirstProductAfterSelect()), firstProductAfterSelect + "не найден после поиска");
 

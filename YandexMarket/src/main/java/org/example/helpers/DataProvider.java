@@ -18,7 +18,7 @@ public class DataProvider {
      */
     public static Stream<Arguments> provideDataCheckingLaptops(){
         return Stream.of(
-                Arguments.of("Электроника", "Ноутбуки", 10000.0, 20000.0, 5, new String[]{"HP", "Lenovo"}));
+                Arguments.of("Электроника", "Ноутбуки", 10000.0, 20000.0, 5, new String[]{"HP", "Lenovo","ASUS"}));
     }
 }
 
