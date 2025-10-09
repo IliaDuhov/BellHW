@@ -8,6 +8,8 @@ import org.aeonbits.owner.Config;
  */
 @Config.LoadPolicy(Config.LoadType.MERGE)
 @Config.Sources({
+        "system:env",
+        "system:properties",
         "file:src/main/resources/tests.properties"
 })
 public interface TestsProperties extends Config {
@@ -25,4 +27,11 @@ public interface TestsProperties extends Config {
      */
     @Config.Key("default.timeout")
     int defaultTimeout();
+
+    /**
+     * Возвращает название переменной окружения драйвера
+     * @return int
+     */
+    @Config.Key("chrome.driver.path")
+    String chromeDriverPath();
 }

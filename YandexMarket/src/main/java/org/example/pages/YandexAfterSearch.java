@@ -148,38 +148,48 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
             );
 
             int newItemsCount = 0;
-            for (WebElement product : products) {
-                WebElement titleElement = product.findElement(By.xpath(
-                        "//div[contains(@id, '/content/page')]//span[@tabindex='0']"));
-                String title = titleElement.getText().toLowerCase();
 
-                if (processedTitles.contains(title)) {
-                    continue;
-                }
+            for (int i = 0; i < products.size(); i++) {
+                List<WebElement> titles = chromeDriver.findElements(
+                        By.xpath("//div[contains(@id, '/content/page')]//span[@tabindex='0']")
+                );
+                List<WebElement> prices = chromeDriver.findElements(
+                        By.xpath("//div[@tabindex='0']//span[contains(@class, 'headline-5_bold')]")
+                );
 
-                processedTitles.add(title);
+                if (i >= titles.size() || i >= prices.size()) break;
+
+                String titleText = titles.get(i).getText().toLowerCase();
+
+                if (processedTitles.contains(titleText)) continue;
+                processedTitles.add(titleText);
                 newItemsCount++;
 
-                WebElement priceElement = product.findElement(By.xpath(
-                        "//div[@tabindex='0']//span[contains(@class, 'headline-5_bold')]"));
-                String priceText = priceElement.getText().replaceAll("[^\\d]", "");
+                String priceText = prices.get(i).getText().replaceAll("[^\\d]", "");
+                if (priceText.isEmpty()) continue;
+
                 double price = Double.parseDouble(priceText);
 
                 boolean priceMatch = price >= minPrice && price <= maxPrice;
                 boolean brandMatch = Arrays.stream(brands)
-                        .anyMatch(brand -> title.contains(brand.toLowerCase()));
+                        .anyMatch(brand -> titleText.contains(brand.toLowerCase()));
 
                 if (!priceMatch || !brandMatch) {
-                   continue;
+                    continue;
                 }
             }
 
-            if (!products.isEmpty()) {
-                WebElement lastProduct = products.get(products.size() - 1);
+            List<WebElement> refreshedProducts = chromeDriver.findElements(
+                    By.xpath("//a[contains(@href, '/card/') and @tabindex='-1']")
+            );
+
+            if (!refreshedProducts.isEmpty()) {
+                WebElement lastProduct = refreshedProducts.get(refreshedProducts.size() - 1);
                 new Actions(chromeDriver)
                         .moveToElement(lastProduct)
                         .perform();
             }
+
             if (newItemsCount == 0) {
                 hasMoreProducts = false;
             } else {
@@ -187,7 +197,6 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
             }
         }
     }
-
     /**
      * Метод, запоминающий названия первого продукта в ленте
      * @author IliaDuhov

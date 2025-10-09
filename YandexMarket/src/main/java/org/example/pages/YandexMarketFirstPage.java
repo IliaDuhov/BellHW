@@ -8,7 +8,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
+import static org.example.helpers.Properties.testsProperties;
+
 
 /**
  * Класс представляющий собой первую страницу
@@ -41,7 +42,7 @@ public class YandexMarketFirstPage {
      */
     public YandexMarketFirstPage(WebDriver chromeDriver){
         this.chromeDriver = chromeDriver;
-        this.wait = new WebDriverWait(chromeDriver, 10);
+        this.wait = new WebDriverWait(chromeDriver, testsProperties.defaultTimeout());
         this.actions = new Actions(chromeDriver);
     }
 

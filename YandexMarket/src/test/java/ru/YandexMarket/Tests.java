@@ -31,7 +31,7 @@ public class Tests extends BaseTest{
     @MethodSource("org.example.helpers.DataProvider#provideDataCheckingLaptops")
     @DisplayName("Задание 1.4 - проверка YandexMarket")
     public void test(String sectionName, String subSectionName, Double minPrice, Double maxPrice,
-                     Integer minNumbOfElements, String...brands){
+                     Integer minNumbOfElements, String...brands) throws InterruptedException {
         openSite(testsProperties.yandexMarketUrl(), chromeDriver);
         openCatalog();
         moveCursorOnSection(sectionName);

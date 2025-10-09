@@ -26,16 +26,6 @@ public class StepsAll {
     private static WebDriver chromeDriver;
 
     /**
-     * Метод для инициализации полей yandexMarketFirstPage
-     * и yandexAfterSearch
-     * @author IliaDuhov
-     */
-    private static void initPages() {
-            yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
-            yandexAfterSearch = new YandexAfterSearch(chromeDriver);
-    }
-
-    /**
      * Поле для инициализации первой страницы YandexMarket
      * @author IliaDuhov
      */
@@ -46,6 +36,16 @@ public class StepsAll {
      * @author IliaDuhov
      */
     private static YandexAfterSearch yandexAfterSearch;
+
+    /**
+     * Метод для инициализации полей yandexMarketFirstPage
+     * и yandexAfterSearch
+     * @author IliaDuhov
+     */
+    private static void initPages() {
+        yandexMarketFirstPage = new YandexMarketFirstPage(chromeDriver);
+        yandexAfterSearch = new YandexAfterSearch(chromeDriver);
+    }
 
     /**
      * Метод открытия сайта

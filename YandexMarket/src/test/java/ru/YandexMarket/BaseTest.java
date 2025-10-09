@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import static org.example.helpers.Properties.testsProperties;
+
 /**
  * Класс родитель для тестов
  * @author IliaDuhov
@@ -23,7 +25,7 @@ public class BaseTest {
      */
     @BeforeEach
     public void before(){
-        System.setProperty("webdriver.chrome.driver", System.getenv("CHROME_DRIVER"));
+        System.setProperty("webdriver.chrome.driver", System.getenv(testsProperties.chromeDriverPath()));
         chromeDriver = new ChromeDriver();
         chromeDriver.manage().window().maximize();
     }
