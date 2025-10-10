@@ -95,9 +95,6 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
         }
     }
 
-
-
-
     /**
      * Метод, проверяющий количество элементов после применения фильтров
      * @author IliaDuhov
