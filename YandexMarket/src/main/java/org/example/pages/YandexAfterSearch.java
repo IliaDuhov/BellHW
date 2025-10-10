@@ -42,13 +42,13 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
      */
     public void setPriceParams(Double minPrice, Double maxPrice) {
         WebElement minPriceInput = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                "//input[@type='text' and contains(@id, 'glprice_25563_min')]"
+                "//input[@type='text' and contains(@id, 'price') and contains(@id, 'min')]"
         )));
         minPriceInput.clear();
         minPriceInput.sendKeys(minPrice.toString());
 
         WebElement maxPriceInput = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                "//input[@type='text' and contains(@id, 'glprice_25563_max')]"
+                "//input[@type='text' and contains(@id, 'price') and contains(@id, 'max')]"
         )));
         maxPriceInput.clear();
         maxPriceInput.sendKeys(maxPrice.toString());
@@ -65,8 +65,6 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
                 By.xpath("//div[@data-auto='filter' and contains(., 'Бренд')]//*[contains(text(), 'Бренд')]")
         ));
 
-        List<String> selectedBrands = new ArrayList<>();
-
         for (String brand : brands) {
             List<WebElement> foundBrands = chromeDriver.findElements(By.xpath(
                     "//div[@data-auto='filter' and contains(., 'Бренд')]//span[contains(text(), '" + brand + "')]"
@@ -74,35 +72,15 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
             if (!foundBrands.isEmpty()) {
                 WebElement brandCheckbox = wait.until(ExpectedConditions.elementToBeClickable(foundBrands.get(0)));
                 brandCheckbox.click();
-                selectedBrands.add(brand);
-            }
-        }
-
-        if (selectedBrands.size() < brands.length) {
-            List<String> remainingBrands = new ArrayList<>();
-            for (String brand : brands) {
-                if (!selectedBrands.contains(brand)) {
-                    remainingBrands.add(brand);
-                }
-            }
-
-            for (String brand : remainingBrands) {
-                WebElement allBrandsButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                        "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button")));
-                allBrandsButton.click();
-                List<WebElement> modalInputs = chromeDriver.findElements(By.xpath(
-                        "//fieldset//input[contains(@placeholder, 'Найти')]"));
-                if (modalInputs.isEmpty()) {
-                    WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
-                            "//div[@data-auto='filter' and contains(., 'Бренд')]//div[@data-baobab-name='showMoreFilters']//button")));
-                    allBrands.click();
-
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-                            "//fieldset//input[contains(@placeholder, 'Найти')]")));
-                }
+            } else {
+                WebElement allBrands = wait.until(ExpectedConditions.elementToBeClickable(By.xpath(
+                        "//div[@data-auto='filter' and contains(., 'Бренд')]//div//button//span[@role]"
+                )));
+                allBrands.click();
 
                 WebElement brandToFind = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(
-                        "//fieldset//input[contains(@placeholder, 'Найти')]")));
+                        "//fieldset//input[@placeholder='Найти']"
+                )));
                 brandToFind.clear();
                 brandToFind.sendKeys(brand);
 
@@ -110,9 +88,13 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
                         "//fieldset//label[@role='checkbox']//span[contains(text(), '" + brand + "')]"
                 )));
                 brandCheckbox.click();
+
+                WebElement closeButton = chromeDriver.findElement(By.xpath("//div[@data-auto='filter' and contains(., 'Бренд')]//div//button//span[@role]"));
+                closeButton.click();
             }
         }
     }
+
 
 
 
@@ -124,7 +106,7 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
      */
     public boolean checkNumberOfElements(Integer minCount){
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
-                "//a[contains(@href, '/card/') and @tabindex='-1']"
+                "//a[contains(@href, '/card/') and @tabindex]"
         )));
 
         return products.size()>=minCount;
@@ -144,14 +126,14 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
 
         while (hasMoreProducts) {
             List<WebElement> products = chromeDriver.findElements(
-                    By.xpath("//a[contains(@href, '/card/') and @tabindex='-1']")
+                    By.xpath("//a[contains(@href, '/card/') and @tabindex]")
             );
 
             int newItemsCount = 0;
 
             for (int i = 0; i < products.size(); i++) {
                 List<WebElement> titles = chromeDriver.findElements(
-                        By.xpath("//div[contains(@id, '/content/page')]//span[@tabindex='0']")
+                        By.xpath("//div[contains(@id, '/content/page')]//span[@tabindex]")
                 );
                 List<WebElement> prices = chromeDriver.findElements(
                         By.xpath("//div[@tabindex='0']//span[contains(@class, 'headline-5_bold')]")
@@ -180,7 +162,7 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
             }
 
             List<WebElement> refreshedProducts = chromeDriver.findElements(
-                    By.xpath("//a[contains(@href, '/card/') and @tabindex='-1']")
+                    By.xpath("//a[contains(@href, '/card/') and @tabindex]")
             );
 
             if (!refreshedProducts.isEmpty()) {
@@ -196,6 +178,16 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
                 pageNumber++;
             }
         }
+        List<WebElement> allProducts = chromeDriver.findElements(
+                By.xpath("//a[contains(@href, '/card/') and @tabindex]")
+        );
+
+        if (!allProducts.isEmpty()) {
+            WebElement firstProduct = allProducts.get(0);
+            new Actions(chromeDriver)
+                    .moveToElement(firstProduct)
+                    .perform();
+        }
     }
     /**
      * Метод, запоминающий названия первого продукта в ленте
@@ -204,7 +196,7 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
      */
     public String getFirstProductAfterSelect(){
         List<WebElement> productsAfterSelect = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
-                "//div[contains(@id, '/content/page')]//span[@tabindex='0']"
+                "//div[contains(@id, '/content/page')]//span[@tabindex]"
         )));
         return productsAfterSelect.get(0).getText();
     }
@@ -233,11 +225,11 @@ public class YandexAfterSearch extends YandexMarketFirstPage {
      */
     public boolean checkResultsAfterHeaderSearch(String expectedProduct) {
         List<WebElement> products = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(
-                "//a[contains(@href, '/card/') and @tabindex='-1']"
+                "//a[contains(@href, '/card/') and @tabindex]"
         )));
 
         for (WebElement product : products) {
-            String productText = product.findElement(By.xpath("//div[contains(@id, '/content/page')]//span[@tabindex='0']")).getText();
+            String productText = product.findElement(By.xpath("//div[contains(@id, '/content/page')]//span[@tabindex]")).getText();
             if (productText.contains(expectedProduct)) {
                 return true;
             }
