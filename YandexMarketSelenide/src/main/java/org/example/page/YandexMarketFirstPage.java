@@ -24,10 +24,10 @@ public class YandexMarketFirstPage extends BasePage{
         return this;
     }
 
-    public YandexMarketFirstPage moveToSubSection(String subSectionName){
-        SelenideElement subSection = $x("//div[@aria-level='2']//a[text()='"+subSectionName+"']")
+    public YandexAfterSearchPage moveToSubSection(String subSectionName){
+        SelenideElement subSection = $x("//div[@aria-level]//a[text()='"+subSectionName+"']")
                 .shouldBe(Condition.interactable);
         subSection.click();
-        return this;
+        return new YandexAfterSearchPage();
     }
 }
