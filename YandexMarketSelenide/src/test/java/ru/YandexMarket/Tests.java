@@ -11,10 +11,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.page;
 import static org.example.helpers.Properties.testsProperties;
 
 public class Tests extends BaseTests{
-
 
     @ParameterizedTest
     @MethodSource("org.example.helpers.DataProvider#provideDataCheckingLaptops")
@@ -22,13 +22,12 @@ public class Tests extends BaseTests{
     public void firstTest(String sectionName, String subSectionName, String...brands){
         open(testsProperties.yandexMarketUrl());
         WebDriverRunner.getWebDriver().manage().window().maximize();
-        YandexMarketFirstPage yandexMarketFirstPage = new YandexMarketFirstPage();
-        yandexMarketFirstPage.openCatalog();
-        yandexMarketFirstPage.moveCursorToSection(sectionName);
-        yandexMarketFirstPage.moveToSubSection(subSectionName);
-        YandexAfterSearchPage yandexAfterSearchPage = new YandexAfterSearchPage();
-        yandexAfterSearchPage.checkIfPageCorrect(subSectionName);
-        yandexAfterSearchPage.selectBrands(brands);
-        yandexAfterSearchPage.checkFilterApplied(brands);
+        YandexMarketFirstPage page = page(YandexMarketFirstPage.class);
+        page.openCatalog()
+                .moveCursorToSection(sectionName)
+                .moveToSubSection(subSectionName, YandexAfterSearchPage.class)
+                .checkIfPageCorrect(subSectionName)
+                .selectBrands(brands)
+                .checkFilterApplied(brands);
     }
 }

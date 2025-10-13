@@ -4,6 +4,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import org.example.helpers.CustomAllureSelenide;
+import org.example.page.BasePage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
@@ -15,10 +16,11 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import static org.example.helpers.Properties.testsProperties;
 
 public class BaseTests {
+
     @BeforeAll
     public static void setup(){
-        SelenideLogger.addListener("AllureSelenide",new CustomAllureSelenide().screenshots(true)
-                .savePageSource(true));
+        //SelenideLogger.addListener("AllureSelenide",new CustomAllureSelenide().screenshots(true)
+        //        .savePageSource(true));
 
         Configuration.timeout = testsProperties.defaultTimeout();
         Configuration.browser = testsProperties.chromeDriverName();

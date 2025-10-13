@@ -3,8 +3,7 @@ package org.example.page;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 
-import static com.codeborne.selenide.Selenide.$x;
-import static com.codeborne.selenide.Selenide.actions;
+import static com.codeborne.selenide.Selenide.*;
 
 public class YandexMarketFirstPage extends BasePage{
 
@@ -24,10 +23,10 @@ public class YandexMarketFirstPage extends BasePage{
         return this;
     }
 
-    public YandexAfterSearchPage moveToSubSection(String subSectionName){
+    public <T extends BasePage> T moveToSubSection(String subSectionName, Class<T> typeNextPage){
         SelenideElement subSection = $x("//div[@aria-level]//a[text()='"+subSectionName+"']")
                 .shouldBe(Condition.interactable);
         subSection.click();
-        return new YandexAfterSearchPage();
+        return typeNextPage.cast(page(typeNextPage));
     }
 }

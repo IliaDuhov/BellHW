@@ -49,54 +49,57 @@ public class YandexAfterSearchPage extends BasePage{
         return this;
     }
 
-    public YandexAfterSearchPage checkFilterApplied(String...brands) {
+    public YandexAfterSearchPage checkFilterApplied(String... brands) {
         int pageNumber = 1;
         Set<String> processedTitles = new HashSet<>();
         boolean hasMoreProducts = true;
 
         while (hasMoreProducts) {
             List<SelenideElement> products = $$x("//a[contains(@href, '/card/') and @tabindex]");
+            List<SelenideElement> titles = $$x("//div[contains(@id, '/content/page')]//span[@tabindex]");
 
             int newItemsCount = 0;
+            int minSize = Math.min(products.size(), titles.size());
 
-            for (int i = 0; i < products.size(); i++) {
-                List<SelenideElement> titles = $$x("//div[contains(@id, '/content/page')]//span[@tabindex]");
-
-                if (i >= titles.size()) break;
-
+            for (int i = 0; i < minSize; i++) {
                 String titleText = titles.get(i).getText().toLowerCase();
 
-                if (processedTitles.contains(titleText)) continue;
-                processedTitles.add(titleText);
-                newItemsCount++;
-
-                boolean brandMatch = Arrays.stream(brands)
-                        .anyMatch(brand -> titleText.contains(brand.toLowerCase()));
-
-                if (!brandMatch) {
+                if (processedTitles.contains(titleText)) {
                     continue;
                 }
+                processedTitles.add(titleText);
+                newItemsCount++;
+                boolean brandMatch = Arrays.stream(brands)
+                        .anyMatch(brand -> titleText.contains(brand.toLowerCase()));
+                if(!brandMatch){
+                    continue;
+                }
+                Assertions.assertTrue(brandMatch,
+                        "Товар '" + titleText + "' не содержит ожидаемых брендов: " + Arrays.toString(brands));
             }
 
-            List<SelenideElement> refreshedProducts = $$x("//a[contains(@href, '/card/') and @tabindex]");
-
-            if (!refreshedProducts.isEmpty()) {
-                SelenideElement lastProduct = refreshedProducts.get(refreshedProducts.size() - 1);
+            if (!products.isEmpty()) {
+                SelenideElement lastProduct = products.get(products.size() - 1);
                 actions().moveToElement(lastProduct).perform();
             }
 
-            if (newItemsCount == 0) {
+            List<SelenideElement> newProducts = $$x("//a[contains(@href, '/card/') and @tabindex]");
+            List<SelenideElement> newTitles = $$x("//div[contains(@id, '/content/page')]//span[@tabindex]");
+
+            int newMinSize = Math.min(newProducts.size(), newTitles.size());
+            if (newMinSize <= processedTitles.size()) {
                 hasMoreProducts = false;
             } else {
                 pageNumber++;
             }
         }
-        List<SelenideElement> allProducts = $$x("//a[contains(@href, '/card/') and @tabindex]");
 
+        List<SelenideElement> allProducts = $$x("//a[contains(@href, '/card/') and @tabindex]");
         if (!allProducts.isEmpty()) {
             SelenideElement firstProduct = allProducts.get(0);
             actions().moveToElement(firstProduct).perform();
         }
+
         return this;
     }
 }
