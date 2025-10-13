@@ -121,7 +121,7 @@ public class CustomAllureSelenide extends AllureSelenide {
      * @author IliaDuhov
      * @param logType тип логов для получения
      * @param level уровень логирования
-     * @return строку с объединенными логами браузера
+     * @return String с объединенными логами браузера
      *
      */
     private static String getBrowserLogs(LogType logType, Level level) {

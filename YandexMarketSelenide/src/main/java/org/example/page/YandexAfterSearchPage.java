@@ -2,10 +2,8 @@ package org.example.page;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 import org.example.helpers.Assertions;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,6 +24,7 @@ public class YandexAfterSearchPage extends BasePage{
      * @param header название подраздела
      * @return YandexAfterSearchPage
      */
+    @Step("Проверяем на корректной ли мы странице")
     public YandexAfterSearchPage checkIfPageCorrect(String header){
         SelenideElement headerName = $x("//h1[contains(text(), '"+ header +"')]")
                 .shouldBe(Condition.visible);
@@ -40,6 +39,7 @@ public class YandexAfterSearchPage extends BasePage{
      * @param brands бренды
      * @return YandexAfterSearchPage
      */
+    @Step("Выбор производителей: {brand1}")
     public YandexAfterSearchPage selectBrands(String...brands){
         for(String brand: brands){
             List<SelenideElement> foundBrands = $$x(
@@ -72,6 +72,7 @@ public class YandexAfterSearchPage extends BasePage{
      * @param brands бренды
      * @return YandexAfterSearchPage
      */
+    @Step("Проверяем применились ли фильтры: {brand1}")
     public YandexAfterSearchPage checkFilterApplied(String... brands) {
         int pageNumber = 1;
         Set<String> processedTitles = new HashSet<>();
