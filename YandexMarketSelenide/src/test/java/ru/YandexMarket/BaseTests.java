@@ -15,12 +15,20 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 import static org.example.helpers.Properties.testsProperties;
 
+/**
+ * Класс родитель для тестов
+ * @author IliaDuhov
+ */
 public class BaseTests {
 
+    /**
+     * Метод выполняющий настройку Selenide перед каждым тестом
+     * @author IliaDuhov
+     */
     @BeforeAll
     public static void setup(){
-        //SelenideLogger.addListener("AllureSelenide",new CustomAllureSelenide().screenshots(true)
-        //        .savePageSource(true));
+        SelenideLogger.addListener("AllureSelenide",new CustomAllureSelenide().screenshots(true)
+                .savePageSource(true));
 
         Configuration.timeout = testsProperties.defaultTimeout();
         Configuration.browser = testsProperties.chromeDriverName();

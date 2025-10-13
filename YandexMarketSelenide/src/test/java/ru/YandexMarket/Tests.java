@@ -14,8 +14,19 @@ import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.page;
 import static org.example.helpers.Properties.testsProperties;
 
+/**
+ * Класс с тестом
+ * @author IliaDuhov
+ */
 public class Tests extends BaseTests{
 
+    /**
+     * Метод выолняющий тест
+     * @author IliaDuhov
+     * @param sectionName название раздела
+     * @param subSectionName название подраздела
+     * @param brands бренды
+     */
     @ParameterizedTest
     @MethodSource("org.example.helpers.DataProvider#provideDataCheckingLaptops")
     @DisplayName("Задание 2.1 - проверка YandexMarket Selenide")

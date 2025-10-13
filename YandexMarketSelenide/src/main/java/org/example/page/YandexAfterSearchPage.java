@@ -14,8 +14,18 @@ import java.util.Set;
 
 import static com.codeborne.selenide.Selenide.*;
 
+/**
+ * Класс представляющий собой страницу после поиска
+ * @author IliaDuhov
+ */
 public class YandexAfterSearchPage extends BasePage{
 
+    /**
+     * Метод, проверяющий корректность страницы после поиска
+     * @author IliaDuhov
+     * @param header название подраздела
+     * @return YandexAfterSearchPage
+     */
     public YandexAfterSearchPage checkIfPageCorrect(String header){
         SelenideElement headerName = $x("//h1[contains(text(), '"+ header +"')]")
                 .shouldBe(Condition.visible);
@@ -23,6 +33,13 @@ public class YandexAfterSearchPage extends BasePage{
         return this;
     }
 
+    /**
+     * Метод, устанавливающий бренд продукта. Если бренды есть в начальном меню, то они выбираются. Если брендов нет,
+     * производится поиск по всем брендам
+     * @author IliaDuhov
+     * @param brands бренды
+     * @return YandexAfterSearchPage
+     */
     public YandexAfterSearchPage selectBrands(String...brands){
         for(String brand: brands){
             List<SelenideElement> foundBrands = $$x(
@@ -49,6 +66,12 @@ public class YandexAfterSearchPage extends BasePage{
         return this;
     }
 
+    /**
+     * Метод, проверяющий применились ли фильтры ко всем элементам
+     * @author IliaDuhov
+     * @param brands бренды
+     * @return YandexAfterSearchPage
+     */
     public YandexAfterSearchPage checkFilterApplied(String... brands) {
         int pageNumber = 1;
         Set<String> processedTitles = new HashSet<>();

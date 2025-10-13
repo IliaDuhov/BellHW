@@ -23,19 +23,58 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
+/**
+ * Кастомная реализация Allure Selenide listener для расширенного логирования тестов
+ * @author IliaDuhov
+ */
 public class CustomAllureSelenide extends AllureSelenide {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AllureSelenide.class);
+
+    /**
+     * Флаг для сохранения скриншотов при выполнении шагов
+     * @author IliaDuhov
+     */
     private boolean saveScreenshots;
+
+    /**
+     * Флаг для сохранения HTML кода страницы
+     * @author IliaDuhov
+     */
     private boolean savePageHtml;
+
+    /**
+     * Флаг для включения шагов с локаторами Selenide в отчет
+     * @author IliaDuhov
+     */
     private boolean includeSelenideLocatorsSteps;
+
+    /**
+     * Коллекция Map типов логов браузера и их уровней для сохранения в отчет
+     * @author IliaDuhov
+     */
     private final Map<LogType, Level> logTypesToSave;
+
+    /**
+     * Поле жизненного цикла Allure для управления шагами и вложениями
+     * @author IliaDuhov
+     */
     private final AllureLifecycle lifecycle;
 
+    /**
+     * Конструктор инициализации по умолчанию
+     * @author IliaDuhov
+     */
     public CustomAllureSelenide() {
         this(Allure.getLifecycle());
     }
 
+    /**
+     * Конструктор с кастомным lifecycle Allure
+     * @author IliaDuhov
+     * @param lifecycle жизненный цикл Allure
+     *
+     */
     public CustomAllureSelenide(AllureLifecycle lifecycle) {
         this.saveScreenshots = true;
         this.savePageHtml = true;
@@ -44,28 +83,58 @@ public class CustomAllureSelenide extends AllureSelenide {
         this.lifecycle = lifecycle;
     }
 
+    /**
+     * Получает скриншот текущего состояния браузера в виде массива байт
+     * @author IliaDuhov
+     * @return Optional<byte[]>
+     */
     private static Optional<byte[]> getScreenshotBytes() {
         try {
-            return WebDriverRunner.hasWebDriverStarted() ? Optional.of(((TakesScreenshot)WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)) : Optional.empty();
+            return WebDriverRunner.hasWebDriverStarted() ?
+                    Optional.of(((TakesScreenshot)WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)) :
+                    Optional.empty();
         } catch (WebDriverException var1) {
             LOGGER.warn("Could not get screen shot", var1);
             return Optional.empty();
         }
     }
 
+    /**
+     * Получает исходный код HTML страницы в виде массива байт
+     * @author IliaDuhov
+     * @return Optional<byte[]>
+     *
+     */
     private static Optional<byte[]> getPageSourceBytes() {
         try {
-            return WebDriverRunner.hasWebDriverStarted() ? Optional.of(WebDriverRunner.getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8)) : Optional.empty();
+            return WebDriverRunner.hasWebDriverStarted() ?
+                    Optional.of(WebDriverRunner.getWebDriver().getPageSource().getBytes(StandardCharsets.UTF_8)) :
+                    Optional.empty();
         } catch (WebDriverException var1) {
             LOGGER.warn("Could not get page source", var1);
             return Optional.empty();
         }
     }
 
+    /**
+     * Получает логи браузера указанного типа и уровня
+     * @author IliaDuhov
+     * @param logType тип логов для получения
+     * @param level уровень логирования
+     * @return строку с объединенными логами браузера
+     *
+     */
     private static String getBrowserLogs(LogType logType, Level level) {
         return String.join("\n\n", Selenide.getWebDriverLogs(logType.toString(), level));
     }
 
+    /**
+     * Обрабатывает событие после выполнения шага теста
+     * Сохраняет скриншоты, HTML страницы и логи в зависимости от настроек
+     * @author IliaDuhov
+     * @param event событие логирования
+     *
+     */
     @Override
     public void afterEvent(LogEvent event) {
         this.lifecycle.getCurrentTestCaseOrStep().ifPresent((parentUuid) -> {
@@ -87,9 +156,7 @@ public class CustomAllureSelenide extends AllureSelenide {
                     this.lifecycle.addAttachment("Logs from: " + logType, "application/json", ".txt", content);
                 });
             }
-
         });
-
 
         if (this.stepsShouldBeLogged(event)) {
             this.lifecycle.getCurrentTestCaseOrStep().ifPresent((parentUuid) -> {
@@ -112,9 +179,15 @@ public class CustomAllureSelenide extends AllureSelenide {
                 this.lifecycle.stopStep();
             });
         }
-
     }
 
+    /**
+     * Определяет, должны ли шаги быть залогированы в отчет
+     * @author IliaDuhov
+     * @param event событие логирования
+     * @return boolean если шаг должен быть залогирован, false в противном случае
+     *
+     */
     private boolean stepsShouldBeLogged(LogEvent event) {
         return this.includeSelenideLocatorsSteps || !(event instanceof SelenideLog);
     }
