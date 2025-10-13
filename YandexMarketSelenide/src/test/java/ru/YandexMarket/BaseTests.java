@@ -1,9 +1,11 @@
 package ru.YandexMarket;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.WebDriverRunner;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import org.example.helpers.CustomAllureSelenide;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -18,17 +20,16 @@ public class BaseTests {
         SelenideLogger.addListener("AllureSelenide",new CustomAllureSelenide().screenshots(true)
                 .savePageSource(true));
 
-        Configuration.timeout=testsProperties.defaultTimeout();
-        Configuration.browser= testsProperties.chromeDriverName();
+        Configuration.timeout = testsProperties.defaultTimeout();
+        Configuration.browser = testsProperties.chromeDriverName();
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--disable-extensions");
+        options.addArguments("--remote-allow-origins=*");
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-        capabilities.setCapability(CapabilityType.PAGE_LOAD_STRATEGY, "none");
 
         Configuration.browserCapabilities = capabilities;
-
     }
 }
