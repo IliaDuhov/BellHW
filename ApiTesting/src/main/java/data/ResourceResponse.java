@@ -19,5 +19,5 @@ public class ResourceResponse {
         private Integer total;
         private Integer total_pages;
         private List<ResourceData> data;
-        private Support support;
+        private SupportDto support;
 }

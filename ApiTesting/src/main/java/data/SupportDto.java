@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
-public class Support {
+public class SupportDto {
 
     private String url;
     private String text;
