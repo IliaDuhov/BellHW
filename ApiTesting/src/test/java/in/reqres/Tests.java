@@ -14,7 +14,9 @@ import java.util.stream.Collectors;
 import static Specification.Specification.*;
 import static io.restassured.RestAssured.given;
 
-
+/**
+ * @author IliaDuhov
+ */
 public class Tests {
 
     @Test
