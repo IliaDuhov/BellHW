@@ -1,16 +1,14 @@
 package in.reqres;
 
 
-import data.ErrorResponse;
-import data.User;
-import data.UserLogingResponse;
-import data.UserLoginRequest;
+import data.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 
@@ -19,7 +17,7 @@ public class Tests {
 
     @Test
     public void checkUniqueAvatarFileNames(){
-        List<User> users = given()
+        List<UserData> users = given()
                 .when()
                 .get("https://reqres.in/api/users?page=2")
                 .then()
@@ -27,10 +25,10 @@ public class Tests {
                 .statusCode(200)
                 .extract()
                 .jsonPath()
-                .getList("data", User.class);
+                .getList("data", UserData.class);
 
         Set<String> avatarFileNames = new HashSet<>();
-        for (User user : users) {
+        for (UserData user : users) {
             String avatarUrl = user.getAvatar();
             String fileName = avatarUrl.substring(avatarUrl.lastIndexOf("/") + 1);
             avatarFileNames.add(fileName);
@@ -77,6 +75,30 @@ public class Tests {
                 .extract().as(ErrorResponse.class);
 
         Assert.assertEquals(response.getError(), "Missing password");
+    }
+
+    @Test
+    public void checkDataSortedByYear(){
+        ResourceResponse response = given()
+                .when()
+                .get("https://reqres.in/api/unknown")
+                .then()
+                .log().all()
+                .statusCode(200)
+                .extract().as(ResourceResponse.class);
+
+        List<Integer> years = response.getData().stream()
+                .map(ResourceData::getYear)
+                .collect(Collectors.toList());
+
+        List<Integer> sortedYears = years.stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(years, sortedYears,
+                "Данные не отсортированы по годам. Исходный порядок: " + years +
+                        ", ожидаемый порядок: " + sortedYears);
+
     }
 
 }

@@ -7,17 +7,10 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class User {
+@Getter
+public class Support {
 
-    private String id;
-
-    private String email;
-
-    private String first_name;
-
-    private String last_name;
-
-    private String avatar;
+    private String url;
+    private String text;
 }

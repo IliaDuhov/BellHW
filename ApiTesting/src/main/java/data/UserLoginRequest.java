@@ -9,7 +9,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UserLoginRequest extends User{
+public class UserLoginRequest{
+
+    private String email;
 
     private String password;
 }
